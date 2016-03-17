@@ -29,7 +29,7 @@
 			}//End function (tx)
 		);//End db.transaction()
 		
-		db.transaction(function (tx) 
+		 db.transaction(function (tx) 
 			{
 				tx.executeSql('SELECT * FROM LOGS', [], function (tx, results) 
 				{
@@ -64,11 +64,13 @@
 </script>		
 </head>	
    <body>
-    <div id="status" name="status">Status Message</div>
+      <div id="status" name="status">Status Message</div>
 	<input id="e_id" type="text" placeholder="ID">
 	<input id="e_log" type="text" placeholder="message">
 	<input type="button" value="Add record" onClick="AddValueToDB()">
+
 	<br>
+
 	<input id="search_id" type="text" placeholder="searchID">
 	<div><input type="button" value="Search" onClick="SearchDatabaseForValue()"></div>
    </body>
