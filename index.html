@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript">
+		
+         var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+         var msg;
+
+         db.transaction(function (tx) 
+			 {
+				tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (id unique, log)');
+				tx.executeSql('INSERT INTO LOGS (id, log) VALUES (1, "foobar")');
+				tx.executeSql('INSERT INTO LOGS (id, log) VALUES (2, "logmsg")');
+				msg = '<p>Log message created and row inserted.</p>';
+				document.querySelector('#status').innerHTML =  msg;
+			 }
+		 );//End db.transaction
+
+	function AddValueToDB() 
+	{
+		var x = document.getElementById("e_id");
+		var id = x.value;
+		var y =  document.getElementById("e_log");
+		var log = y.value;
+		 
+		db.transaction(function (tx) 
+			{  
+					tx.executeSql('INSERT INTO LOGS (id,log) VALUES (?, ?)', [id, log]);
+			}//End function (tx)
+		);//End db.transaction()
+		
+		 db.transaction(function (tx) 
+			{
+				tx.executeSql('SELECT * FROM LOGS', [], function (tx, results) 
+				{
+					var len = results.rows.length, i;
+					msg = "<p>Found rows: " + len + "</p>";
+					document.querySelector('#status').innerHTML +=  msg;
+
+					for (i = 0; i < len; i++)
+					{
+					msg = "<p><b>" + results.rows.item(i).log + "</b></p>";
+					document.querySelector('#status').innerHTML +=  msg;
+					}
+				}, null);//End tx.executeSql()
+			 }//End function(tx) 
+		);//End db.transaction()
+	}//End AddValueToDB()
+
+	function SearchDatabaseForValue(){
+		db.transaction(function (tx) 
+			{
+				tx.executeSql('SELECT * FROM LOGS', [id], function (tx, results) 
+				{
+					var len = results.rows.length, i;
+					msg = "<p>Found rows: " + len + "</p>";
+					document.querySelector('#status').innerHTML +=  msg;
+
+					for (i = 0; i < len; i++)
+					{
+					msg = "<p><b>" + results.rows.item(i).log + "</b></p>";
+					document.querySelector('#status').innerHTML +=  msg;
+					}
+				}, null);//End tx.executeSql()
+			 }//End function(tx) 
+	}
+
+</script>		
+</head>	
+   <body>
+      <div id="status" name="status">Status Message</div>
+	<input id="e_id" type="text" placeholder="ID">
+	<input id="e_log" type="text" placeholder="message">
+	<input type="button" value="Add record" onClick="AddValueToDB()">
+	<div><input type="button" value="Search" onClick="GetValueFromDatabase()"></div>
+   </body>
+</html>
